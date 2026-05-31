@@ -646,8 +646,7 @@ const getResponse = async (course, step, userText, allMsgs, responses, nextStep)
   const smart = generateResponse(course, step, userText, allMsgs, responses, nextStep);
   const nextIsInteractive = nextStep && (nextStep.type === "scale" || nextStep.type === "mcq" || nextStep.type === "emoji");
 
-  // Skip LLM entirely for transitions — rule engine handles these reliably
-  if (nextIsInteractive) return smart;
+  // LLM handles ALL responses including transitions — for natural, human-like conversation
 
   try {
     const casual = isCasual(allMsgs);
@@ -766,16 +765,20 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
     const reply = d.message?.content?.trim();
     // Quality gate — reject generic/short/long/lazy/data-dump responses
     const maxLen = nextIsInteractive ? 400 : 700;
-    if (reply && reply.length > 15 && reply.length < maxLen
+    if (reply && reply.length > (nextIsInteractive ? 40 : 15) && reply.length < maxLen
         && !/tell me (a bit )?more/i.test(reply)
         && !/thanks for (that|sharing)/i.test(reply)
+        && !/thank you for (that|sharing|your)/i.test(reply)
         && !/that'?s interesting/i.test(reply)
         && !/I appreciate/i.test(reply)
         && !/could you (elaborate|expand)/i.test(reply)
         && !/You felt that/i.test(reply)
         && !/Wk\d+-\d+/i.test(reply)           // reject weekly schedule dumps
         && !(reply.match(/\(\d+%\)/g)||[]).length >= 2  // reject assessment weight lists
-        && !/It sounds like/i.test(reply)) {
+        && !/It sounds like/i.test(reply)
+        && !/^(Noted|Got it|Nice one|Good stuff|Fair enough)[.!]?\s*(Next|Moving|Continuing|Let'?s)/i.test(reply)
+        && !/Quick rating coming up/i.test(reply)
+        && !/coming up:/i.test(reply)) {
       return reply;
     }
   } catch (_e) { /* Ollama unavailable or timed out — smart engine handles it */ }
