@@ -477,22 +477,22 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
     const val = lastResp.value;
     if (lastResp.type === "scale") {
       const num = typeof val === "number" ? val : parseInt(val);
-      // If next step is interactive → short acknowledgment + transition
+      // If next step is interactive → warm acknowledgment referencing their score + natural transition
       if (nextIsInteractive) {
         if (num >= 8) {
           const opts = casual
-            ? [`${num}/10 — solid! Moving on...`, `Nice, ${num}. Noted!`, `${num} — respect. Next one:`]
-            : [`${num} out of 10 — noted, thank you.`, `A strong ${num}. Let's continue.`, `${num}/10 — good to know. Next:`];
+            ? [`${num}/10 — that's a strong score, clearly something's clicking for you in this course. That's exactly the kind of detail the teaching team wants to hear. Alright, next one for you:`, `${num} — high praise! Sounds like this part of the course is landing well, which is great to know. Let's keep rolling:`, `${num}/10 — love to see it. Not every course gets those numbers, so that says something about how it's being run. On that note:`]
+            : [`A ${num} out of 10 is meaningful — that suggests this area is working well for students. The teaching team will appreciate that specific signal. Let's continue:`, `${num}/10 — that's a strong rating and really useful for the course team to see. Moving to the next one:`, `${num} out of 10 tells a clear story — something's working right here. Let's see how the next area compares:`];
           return opts[Math.floor(Math.random() * opts.length)];
         } else if (num >= 5) {
           const opts = casual
-            ? [`${num}/10 — fair enough. Next up:`, `${num}, got it. Moving along:`, `${num} — noted. Let's keep going.`]
-            : [`${num} out of 10 — understood. Moving on:`, `A ${num} — noted. Next question:`, `${num}/10 — fair. Continuing:`];
+            ? [`${num}/10 — so not terrible, but clearly room to improve. That kind of honest middle-ground feedback is actually super useful for the team. Here's the next one:`, `${num} — fair enough, sounds like it was okay but nothing special. That's worth flagging because "fine" can hide real issues. Next up:`, `A ${num} — right in the middle. That usually means some things worked and some didn't, which is exactly what the team needs to hear. Alright:`]
+            : [`${num} out of 10 — that middle range is actually very informative because it points to specific areas for improvement. Let's continue:`, `A ${num} suggests a mixed experience — that kind of nuance is exactly what this feedback is designed to capture. Next question:`, `${num}/10 — useful signal. There's clearly both positives and room for growth there. Let's keep going:`];
           return opts[Math.floor(Math.random() * opts.length)];
         } else {
           const opts = casual
-            ? [`${num}/10 — ouch. Noted. Next:`, `${num}... yeah, that's telling. Moving on:`, `${num} — that says a lot. Next one:`]
-            : [`A ${num} — that's significant. Let's continue:`, `${num} out of 10 — noted. Moving on:`, `${num}/10 — important feedback. Next:`];
+            ? [`${num}/10 — yeah, that's a pretty clear signal something's not working. That kind of honest feedback is exactly what can drive real changes in the course. Let's see what else comes up:`, `Oof, ${num}. That's telling — and it takes guts to be straight about it. The teaching team needs to hear scores like this to know where to focus. Next:`, `${num}/10 — that stands out, and not in a good way. But that's exactly why this feedback matters — it highlights what actually needs fixing. Onto the next one:`]
+            : [`A ${num} is significant feedback — that clearly signals an area that needs attention. The teaching team will want to understand this further. Let's continue:`, `${num} out of 10 — that's an important data point. Scores in this range help identify where the most urgent improvements are needed. Moving on:`, `${num}/10 — that's notable and the kind of candid input that drives real change. Let's keep going:`];
           return opts[Math.floor(Math.random() * opts.length)];
         }
       }
@@ -541,10 +541,10 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
 
     if (lastResp.type === "mcq") {
       if (nextIsInteractive) {
-        // Short transition
-        if (val.includes("well organised") || val.includes("timely")) return casual ? `Good stuff. Next:` : `Noted, that's positive. Moving on:`;
-        if (val.includes("serious work") || val.includes("all over") || val.includes("None")) return casual ? `That's rough. Noted. Next one:` : `Important feedback — noted. Continuing:`;
-        return casual ? `Got it. Next:` : `Understood. Let's continue:`;
+        if (val.includes("well organised") || val.includes("timely")) return casual ? `"${val}" — that's actually rarer feedback than you'd think. Most courses struggle with this, so the fact that it's working here is worth documenting. Alright, next one:` : `Selecting "${val}" is notable — that kind of structural consistency is something the course team clearly works at. Let's continue:`;
+        if (val.includes("serious work") || val.includes("all over") || val.includes("None")) return casual ? `"${val}" — yeah, that's a strong response and exactly the kind of thing the teaching team needs to hear directly. It takes honesty to flag that. Let's keep going:` : `"${val}" — that's significant feedback. Responses like this help identify where the most impactful changes can be made. Moving on:`;
+        if (val.includes("gaps") || val.includes("not enough")) return casual ? `"${val}" — fair call. Gaps can be frustrating, especially when you're trying to build on what you've learned. That's useful for the team to know. Next up:` : `"${val}" — that's constructive feedback. Understanding where gaps exist helps the course team prioritize improvements. Let's continue:`;
+        return casual ? `"${val}" — solid choice, and that's exactly the kind of specific input that helps shape how this course evolves. Onto the next one:` : `"${val}" — useful perspective. These kinds of specific selections help paint a clearer picture for the teaching team. Continuing:`;
       }
       if (val.includes("well organised") || val.includes("timely")) {
         const opts = casual ? [
