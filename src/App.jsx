@@ -96,6 +96,16 @@ const COURSES = {
     commonConcerns: ["Docker/K8s setup complexity", "theory-practice gap", "insufficient tutor support", "55% exam weighting"],
     mode: "full"
   },
+  CHEM1100: {
+    code: "CHEM1100", name: "Chemistry 1", semester: "S1 2026",
+    assessments: ["Lab Experiments & Report (25%, hurdle)", "Chemistry Thinking & Literacy (15%, group)", "In-Semester Exam (20%, hurdle)", "End of Semester Exam (40%, hurdle)"],
+    topics: ["Atomic Structure", "Bonding & Hybridisation", "Molecular Shape", "Organic Chemistry Intro", "Thermodynamics", "Chemical Equilibrium", "Redox Chemistry"],
+    recentChange: "new one-pager distributed for student feedback pilot",
+    keyDetail: "the fortnightly lab experiments and the 60% exam weighting (mid-sem + final)",
+    weeklyFlow: "Wk1-3 Atomic structure & bonding, Wk4-6 Molecular shape & organic intro, Wk7-9 States of matter & thermodynamics, Wk10-12 Equilibrium & redox, Wk13 Review",
+    commonConcerns: ["heavy exam weighting (60%)", "lab report turnaround time", "maths preparation gap", "pace of content coverage"],
+    mode: "full"
+  },
   MEDI7200: {
     code: "MEDI7200", name: "Developing Skills in Medicine", semester: "S1 2026",
     assessments: ["Clinical Portfolio", "OSCE", "Written Examination"],
