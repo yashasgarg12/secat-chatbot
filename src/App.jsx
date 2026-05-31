@@ -731,18 +731,23 @@ CONVERSATION STYLE:
 - ${sent === "negative" ? "CRITICAL: The student is unhappy. Do NOT say thanks/appreciated/great. Validate their frustration FIRST — 'Yeah, that sounds rough' or 'That's not okay' — then ask what went wrong." : sent === "positive" ? "Match their positive energy. Reflect their enthusiasm back genuinely — 'That's awesome' or 'Love hearing that'." : "Neutral tone — be straightforward and engaged."}
 
 HARD RULES:
-- 2-3 sentences. Enough to feel like a real person responded — not a bot firing off one-liners.
-- NEVER use: "Thanks for sharing", "That's interesting", "Could you tell me more", "I appreciate", "Great point", "It sounds like", "You felt that", "That's valuable feedback".
+- 2-3 sentences MINIMUM. Sound like a real human who actually cares about what the student just said. One-liners like "Noted!", "Got it!", "Nice, next one:" are FORBIDDEN — they kill engagement.
+- NEVER use: "Thanks for sharing", "That's interesting", "Could you tell me more", "I appreciate", "Great point", "It sounds like", "You felt that", "That's valuable feedback", "Noted", "Got it", "Next one".
 - NEVER start with "I".
 - NEVER list course data or schedules.
 - Ask about something SPECIFIC they said — not generic "can you elaborate".
-${nextIsInteractive ? `- CRITICAL: Next is a ${nextStep.type}${nextStep.label ? ` ("${nextStep.label}")` : ""}. Acknowledge what they said warmly in 1-2 sentences, then smoothly transition to the next question. Don't just say "noted" — show you heard them.` : "- End with a specific follow-up question based on what they just told you."}`;
+${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${nextStep.label}")` : ""}. You MUST:
+  1) React to what they said with genuine warmth — reference a SPECIFIC detail from their answer (2 sentences minimum).
+  2) Then naturally lead into the next question with a brief connecting thought.
+  BAD example: "Got it, cheers. Quick rating coming up:" — this is lazy and robotic. NEVER do this.
+  GOOD example: "Free riders in a 40% project — that's rough, especially when the code interview means YOU have to know everything regardless. Sounds like the learning stuck though, which is what matters. Alright, quick one for you:"
+  GOOD example: "PCA in the lecture then something totally different in the tute — yeah, that disconnect is frustrating when you're trying to build on what you just learned. On that note:"` : "- End with a specific follow-up question based on what they just told you."}`;
 
     const llmMessages = [
       { role: "system", content: prompt },
       ...allMsgs.filter(m=>!m.hidden).slice(-6).map(m=>({role:m.role,content:m.content}))
     ];
-    const llmOptions = { temperature: 0.85, num_predict: nextIsInteractive ? 80 : 200 };
+    const llmOptions = { temperature: 0.9, num_predict: nextIsInteractive ? 150 : 250 };
 
     // In production: use /api/chat (Vercel serverless → Gemini)
     // In dev: use /ollama/api/chat (Vite proxy → local Ollama)
@@ -760,7 +765,7 @@ ${nextIsInteractive ? `- CRITICAL: Next is a ${nextStep.type}${nextStep.label ? 
     const d = await res.json();
     const reply = d.message?.content?.trim();
     // Quality gate — reject generic/short/long/lazy/data-dump responses
-    const maxLen = nextIsInteractive ? 250 : 600;
+    const maxLen = nextIsInteractive ? 400 : 700;
     if (reply && reply.length > 15 && reply.length < maxLen
         && !/tell me (a bit )?more/i.test(reply)
         && !/thanks for (that|sharing)/i.test(reply)
