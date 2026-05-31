@@ -86,7 +86,7 @@ function doPost(e) {
   }
 }
 
-// ─── Save full session JSON ───
+// ─── Save full session JSON (upsert by sessionId) ───
 function saveSession(data) {
   if (!data || !data.course || !data.course.code) {
     return jsonResponse({ error: "Missing course.code" });
@@ -107,6 +107,17 @@ function saveSession(data) {
     data.exportedAt || new Date().toISOString(),
     JSON.stringify(data)
   ];
+
+  // Upsert: if sessionId exists, update that row; otherwise append
+  if (data.sessionId && sheet.getLastRow() > 1) {
+    const ids = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues();
+    for (let i = 0; i < ids.length; i++) {
+      if (ids[i][0] === data.sessionId) {
+        sheet.getRange(i + 2, 1, 1, 9).setValues([row]);
+        return jsonResponse({ ok: true, message: "Session updated" });
+      }
+    }
+  }
 
   sheet.appendRow(row);
 

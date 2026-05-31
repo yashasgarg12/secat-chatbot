@@ -580,8 +580,10 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
 
     if (lastResp.type === "emoji") {
       if (nextIsInteractive) {
-        if (val === "Excellent" || val === "Good") return casual ? `Nice one. Next:` : `Good to know. Continuing:`;
-        return casual ? `Fair enough. Moving on:` : `Noted. Let's continue:`;
+        if (val === "Excellent") return casual ? `Excellent — that's a strong endorsement, and it's the kind of specific signal that helps the teaching team know what's actually landing with students. Let's keep going:` : `An "Excellent" rating is valuable — it highlights what's working well and worth preserving. Let's continue:`;
+        if (val === "Good") return casual ? `Good — so it's working but maybe not blowing anyone away. That's honest and useful for the team to hear. Onto the next one:` : `A "Good" rating suggests solid foundations with potential for improvement — that's useful context. Let's continue:`;
+        if (val === "Meh") return casual ? `Meh — yeah, that's a vibe. When something's just "meh" it usually means there's a specific thing that could make it click better. Useful to know. Next up:` : `A "Meh" response signals there's room for meaningful improvement — that's important feedback. Moving on:`;
+        return casual ? `Poor — that's a clear signal something isn't working, and it takes honesty to say that directly. The teaching team needs to hear it. Let's continue:` : `A "Poor" rating is significant feedback — it identifies an area that clearly needs attention. Continuing:`;
       }
       const emojiResponses = {
         Excellent: casual
@@ -765,7 +767,7 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
     const reply = d.message?.content?.trim();
     // Quality gate — reject generic/short/long/lazy/data-dump responses
     const maxLen = nextIsInteractive ? 400 : 700;
-    if (reply && reply.length > (nextIsInteractive ? 40 : 15) && reply.length < maxLen
+    if (reply && reply.length > (nextIsInteractive ? 80 : 15) && reply.length < maxLen
         && !/tell me (a bit )?more/i.test(reply)
         && !/thanks for (that|sharing)/i.test(reply)
         && !/thank you for (that|sharing|your)/i.test(reply)
@@ -776,9 +778,12 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
         && !/Wk\d+-\d+/i.test(reply)           // reject weekly schedule dumps
         && !(reply.match(/\(\d+%\)/g)||[]).length >= 2  // reject assessment weight lists
         && !/It sounds like/i.test(reply)
-        && !/^(Noted|Got it|Nice one|Good stuff|Fair enough)[.!]?\s*(Next|Moving|Continuing|Let'?s)/i.test(reply)
-        && !/Quick rating coming up/i.test(reply)
-        && !/coming up:/i.test(reply)) {
+        && !/^(Noted|Got it|Nice one|Good stuff|Fair enough|Understood|Good to know|Positive feedback)[.!,]?\s/i.test(reply)
+        && !/Quick rating/i.test(reply)
+        && !/coming up:/i.test(reply)
+        && !/Moving on/i.test(reply)
+        && !/Let'?s continue/i.test(reply)
+        && !/Next one/i.test(reply)) {
       return reply;
     }
   } catch (_e) { /* Ollama unavailable or timed out — smart engine handles it */ }
