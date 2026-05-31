@@ -1557,7 +1557,7 @@ export default function App(){
     rec.current._shouldListen=false;
   },[speechSupported]);
 
-  const save=(data)=>{try{localStorage.setItem(`secat-${data.key}`,JSON.stringify(data))}catch(e){console.log("Save failed:",e)}};
+  const save=(data)=>{try{localStorage.setItem(`secat-${data.key}`,JSON.stringify({...data, sessionId: sessionIdRef.current}))}catch(e){console.log("Save failed:",e)}};
   const load=(key)=>{try{const d=localStorage.getItem(`secat-${key}`);return d?JSON.parse(d):null}catch(e){console.log("Load failed:",e);return null}};
 
   const flow = course ? getFlow(course) : FLOW_FULL;
@@ -1569,24 +1569,81 @@ export default function App(){
     // Restore in-progress session; if completed, clear it and start fresh
     if(saved?.msgs?.length>1){
       const isComplete = saved.fi >= cFlow.length;
-      if(!isComplete){setMsgs(saved.msgs);setFi(saved.fi||0);setResponses(saved.responses||[]);setStrikes(saved.strikes||0);return}
+      if(!isComplete){
+        setMsgs(saved.msgs);setFi(saved.fi||0);setResponses(saved.responses||[]);setStrikes(saved.strikes||0);
+        if(saved.sessionId) sessionIdRef.current = saved.sessionId;
+        lastSavedCountRef.current = (saved.responses||[]).length;
+        resetInactivity();
+        return;
+      }
       resetSession(key);
     }
+    sessionIdRef.current = null; // fresh session ID
+    lastSavedCountRef.current = 0;
     setLoading(true);
     const greeting=generateResponse(c,cFlow[0],"",[], [],cFlow[1]||null);
     const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     const m=[{role:"user",content:`Starting feedback for ${c.code}`,hidden:true},{role:"assistant",content:greeting,timestamp:ts}];
     setMsgs(m);setFi(1);setLoading(false);setDone(false);setResponses([]);setStrikes(0);setBlocked(false);
     save({key,msgs:m,fi:1,responses:[],strikes:0});
+    resetInactivity();
   };
 
   const resetSession = (key) => {
     try { localStorage.removeItem(`secat-${key}`); } catch(e) { console.log("Reset failed:",e); }
   };
 
-  // Auto-export: append CSV rows to per-course file on server + save session JSON
+  // Stable session ID — created once per session, persisted in localStorage
+  const sessionIdRef = useRef(null);
+  const getSessionId = (key) => {
+    if (sessionIdRef.current) return sessionIdRef.current;
+    try { const d = localStorage.getItem(`secat-${key}`); if (d) { const p = JSON.parse(d); if (p?.sessionId) { sessionIdRef.current = p.sessionId; return p.sessionId; } } } catch(_e) {/* ignore */}
+    // eslint-disable-next-line react-hooks/purity -- called only from event handlers
+    const id = globalThis.Date.now().toString(36) + globalThis.Math.random().toString(36).slice(2,6);
+    sessionIdRef.current = id;
+    return id;
+  };
+
+  // ─── INACTIVITY TIMEOUT (5 min) ───
+  const inactivityRef = useRef(null);
+  const resetInactivity = () => {
+    if (inactivityRef.current) clearTimeout(inactivityRef.current);
+    inactivityRef.current = setTimeout(() => {
+      if (course && !done && responses.length > 0) {
+        // Auto-close: save whatever we have, then reset
+        autoExport(course, responses);
+        setDone(true);
+        setMsgs(prev => [...prev, { role: "assistant", content: "Session timed out after 5 minutes of inactivity. Your responses have been saved — thanks for the feedback you gave!", timestamp: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) }]);
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  };
+  useEffect(() => { return () => { if (inactivityRef.current) clearTimeout(inactivityRef.current); }; }, []);
+
+  // ─── INCREMENTAL SAVE — save partial session to Sheets after each response ───
+  const lastSavedCountRef = useRef(0);
+  const incrementalSave = async (c, resps) => {
+    if (!IS_PRODUCTION || resps.length === 0 || resps.length === lastSavedCountRef.current) return;
+    lastSavedCountRef.current = resps.length;
+    const sid = getSessionId(c.key);
+    const scales = resps.filter(r => r.type === "scale");
+    const chats = resps.filter(r => r.type === "chat" && r.value);
+    const avg = scales.length ? (scales.reduce((s,r) => s+Number(r.value), 0)/scales.length).toFixed(1) : "N/A";
+    const sentimentData = chats.reduce((acc,ch) => { const s = sentiment(ch.value); acc[s] = (acc[s]||0)+1; return acc; }, {});
+    const cFlow = getFlow(c);
+    const data = {
+      sessionId: sid,
+      course: { code: c.code, name: c.name, semester: c.semester, mode: c.mode },
+      summary: { averageScore: parseFloat(avg)||0, totalResponses: resps.length, totalQuestions: cFlow.length, complete: resps.length >= cFlow.length - 1, sentimentBreakdown: sentimentData },
+      responses: resps.map(r => ({...r, sentiment: r.type === "chat" && r.value ? sentiment(r.value) : null})),
+      exportedAt: new Date().toISOString(),
+      partial: true
+    };
+    try { await api.saveSession(data); } catch (e) { console.warn("Incremental save failed:", e); }
+  };
+
+  // Auto-export: append CSV rows to per-course file on server + save session JSON (FINAL)
   const autoExport = async (c, resps) => {
-    const sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    const sessionId = getSessionId(c.key);
     // Build CSV rows (no header — server handles that)
     let rows = "";
     resps.forEach(r => {
@@ -1616,10 +1673,13 @@ export default function App(){
   };
 
   const handleInteractive=async(value)=>{
+    resetInactivity();
     const step=flow[fi];
     const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     const r={id:step.id,type:step.type,secat:step.secat,label:step.label,value,timestamp:ts};
     const nr=[...responses,r];setResponses(nr);
+    // Save partial progress to Sheets immediately
+    setTimeout(()=>incrementalSave(course,nr),200);
     const txt=step.type==="scale"?`${step.label}: ${value}/10`:`${step.label||step.secat}: ${value}`;
     const nm=[...msgs,{role:"user",content:txt,timestamp:ts}];setMsgs(nm);
     const ni=fi+1;
@@ -1647,6 +1707,7 @@ export default function App(){
 
   const send=async(text)=>{
     if(!text.trim()||loading||done||blocked)return;
+    resetInactivity();
     const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     if(BAD.test(text)){
       const ns=strikes+1;setStrikes(ns);
@@ -1660,7 +1721,11 @@ export default function App(){
 
     // Store redacted version
     if(step.type==="chat"&&step.secat){
-      setResponses(p=>[...p,{id:step.id,type:"chat",secat:step.secat,topic:step.topic,value:redact(text),timestamp:ts}]);
+      const chatResp = {id:step.id,type:"chat",secat:step.secat,topic:step.topic,value:redact(text),timestamp:ts};
+      const updatedResps = [...responses, chatResp];
+      setResponses(updatedResps);
+      // Save partial progress to Sheets immediately
+      setTimeout(()=>incrementalSave(course,updatedResps),200);
     }
 
     const ni=fi+1;const isLast=ni>=flow.length;
