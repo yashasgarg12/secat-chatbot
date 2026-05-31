@@ -608,6 +608,38 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
   const echoWords = userText ? userText.replace(/[.!?,;:'"]/g, "").split(" ").filter(w => w.length > 3) : [];
   const echoPhrase = echoWords.slice(0, 4).join(" ").toLowerCase();
 
+  // Chat → interactive transition: warm acknowledgment of what they said, no question
+  if (nextIsInteractive && echoPhrase) {
+    if (sent === "negative") {
+      const opts = casual ? [
+        `"${echoPhrase}" — that's a real frustration, and it's exactly the kind of thing the teaching team needs to hear directly. That feedback matters more than you'd think. Alright, here's the next one:`,
+        `Yeah, "${echoPhrase}" shouldn't be happening in a well-run course. The fact you're being straight about it is genuinely helpful — this is how things actually get changed. On that note:`,
+      ] : [
+        `"${echoPhrase}" — that's significant feedback and exactly the kind of specific issue that can drive real improvement. The teaching team will want to address this. Let's continue:`,
+        `Your point about "${echoPhrase}" highlights something important. This level of specificity is exactly what helps course teams make targeted changes. Here's the next question:`,
+      ];
+      return opts[Math.floor(Math.random() * opts.length)];
+    }
+    if (sent === "positive") {
+      const opts = casual ? [
+        `"${echoPhrase}" — that's awesome to hear, and it's the kind of specific positive signal that tells the team what's actually landing with students. Alright, next up:`,
+        `Love hearing "${echoPhrase}" — that's not generic praise, that's a concrete thing the course is doing right. Worth documenting. Here's the next one:`,
+      ] : [
+        `"${echoPhrase}" — that's meaningful positive feedback. Specific signals like this help the teaching team understand what to preserve and build on. Let's continue:`,
+        `Your mention of "${echoPhrase}" is valuable — it identifies a concrete strength that the course team should know about. Here's the next question:`,
+      ];
+      return opts[Math.floor(Math.random() * opts.length)];
+    }
+    const opts = casual ? [
+      `"${echoPhrase}" — interesting perspective, and the specificity really helps. That's the kind of detail that actually makes it into course improvement discussions. Alright:`,
+      `So "${echoPhrase}" — yeah, that tracks. Hearing the specific details like this is way more useful than a generic "it was fine." Let's keep going:`,
+    ] : [
+      `"${echoPhrase}" — that's a thoughtful observation. This kind of specific feedback is exactly what helps the teaching team understand the student experience. Continuing:`,
+      `Your point about "${echoPhrase}" adds useful context. These specific details help paint a fuller picture for course improvement. Here's the next question:`,
+    ];
+    return opts[Math.floor(Math.random() * opts.length)];
+  }
+
   if (sent === "negative") {
     if (echoPhrase && casual) {
       const opts = [
