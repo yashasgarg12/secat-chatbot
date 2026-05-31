@@ -1,0 +1,138 @@
+{
+  "sessionId": "mouqu7rjwg1o",
+  "course": {
+    "code": "INFS4203/7203",
+    "name": "Data Mining",
+    "semester": "S2 2025",
+    "mode": "full"
+  },
+  "summary": {
+    "averageScore": 7.2,
+    "totalResponses": 13,
+    "sentimentBreakdown": {
+      "positive": 3,
+      "neutral": 2
+    },
+    "topicsDiscussed": {}
+  },
+  "responses": [
+    {
+      "id": "q1",
+      "type": "scale",
+      "secat": "Q1",
+      "label": "I had a clear understanding of the aims and goals",
+      "value": 5,
+      "timestamp": "10:21 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q1f",
+      "type": "chat",
+      "secat": "Q1",
+      "topic": "aims",
+      "value": "clear bro",
+      "timestamp": "10:22 AM",
+      "sentiment": "positive"
+    },
+    {
+      "id": "q2",
+      "type": "scale",
+      "secat": "Q2",
+      "label": "The course was intellectually stimulating",
+      "value": 7,
+      "timestamp": "10:22 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "secat": "Q3",
+      "label": "How was the course structured?",
+      "value": "Really well organised",
+      "timestamp": "10:22 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q3f",
+      "type": "chat",
+      "secat": "Q3",
+      "topic": "structure",
+      "value": "yes they did to me",
+      "timestamp": "10:22 AM",
+      "sentiment": "neutral"
+    },
+    {
+      "id": "q4",
+      "type": "emoji",
+      "secat": "Q4",
+      "label": "How useful were the learning materials?",
+      "value": "Good",
+      "timestamp": "10:22 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q5",
+      "type": "scale",
+      "secat": "Q5",
+      "label": "Assessment requirements were clear to me",
+      "value": 8,
+      "timestamp": "10:22 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q5f",
+      "type": "chat",
+      "secat": "Q5",
+      "topic": "assessment",
+      "value": "yes feels great",
+      "timestamp": "10:23 AM",
+      "sentiment": "positive"
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "secat": "Q6",
+      "label": "Did you get helpful feedback on your work?",
+      "value": "Yes — timely and useful",
+      "timestamp": "10:23 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q7",
+      "type": "scale",
+      "secat": "Q7",
+      "label": "I learned a lot in this course",
+      "value": 8,
+      "timestamp": "10:23 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q8",
+      "type": "scale",
+      "secat": "Q8",
+      "label": "Overall course rating",
+      "value": 8,
+      "timestamp": "10:23 AM",
+      "sentiment": null
+    },
+    {
+      "id": "q9",
+      "type": "chat",
+      "secat": "Q9",
+      "topic": "best",
+      "value": "nah, all was good to me.",
+      "timestamp": "10:23 AM",
+      "sentiment": "positive"
+    },
+    {
+      "id": "q10",
+      "type": "chat",
+      "secat": "Q10",
+      "topic": "improve",
+      "value": "Yes, take this course.",
+      "timestamp": "10:24 AM",
+      "sentiment": "neutral"
+    }
+  ],
+  "exportedAt": "2026-05-07T00:24:11.253Z"
+}
