@@ -3,6 +3,22 @@
 // Accepts the same request format as the chatbot's Ollama calls,
 // translates to Gemini API, and returns in the same response format.
 
+// Simple in-memory rate limiter (per serverless instance)
+const rateMap = new Map();
+const RATE_LIMIT = 12; // max requests per window
+const RATE_WINDOW = 60000; // 1 minute
+
+function checkRate(ip) {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now - entry.start > RATE_WINDOW) {
+    rateMap.set(ip, { start: now, count: 1 });
+    return true;
+  }
+  entry.count++;
+  return entry.count <= RATE_LIMIT;
+}
+
 export default async function handler(req, res) {
   // CORS headers for Vercel
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -15,6 +31,12 @@ export default async function handler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Rate limit check
+  const clientIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown";
+  if (!checkRate(clientIp)) {
+    return res.status(429).json({ error: "Too many requests. Please wait a moment." });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -55,7 +77,7 @@ export default async function handler(req, res) {
     }
 
     const temperature = options?.temperature ?? 0.8;
-    const maxTokens = options?.num_predict ?? 120;
+    const maxTokens = options?.num_predict ?? 200;
 
     const geminiBody = {
       contents: cleanContents,

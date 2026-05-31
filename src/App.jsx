@@ -721,18 +721,18 @@ CONVERSATION STYLE:
 - ${sent === "negative" ? "CRITICAL: The student is unhappy. Do NOT say thanks/appreciated/great. Validate their frustration FIRST — 'Yeah, that sounds rough' or 'That's not okay' — then ask what went wrong." : sent === "positive" ? "Match their positive energy. Reflect their enthusiasm back genuinely — 'That's awesome' or 'Love hearing that'." : "Neutral tone — be straightforward and engaged."}
 
 HARD RULES:
-- 1-2 sentences MAX.
+- 2-3 sentences. Enough to feel like a real person responded — not a bot firing off one-liners.
 - NEVER use: "Thanks for sharing", "That's interesting", "Could you tell me more", "I appreciate", "Great point", "It sounds like", "You felt that", "That's valuable feedback".
 - NEVER start with "I".
 - NEVER list course data or schedules.
 - Ask about something SPECIFIC they said — not generic "can you elaborate".
-${nextIsInteractive ? `- CRITICAL: Next is a ${nextStep.type}${nextStep.label ? ` ("${nextStep.label}")` : ""}. ONE short sentence acknowledging what they said — NO question. They interact with a ${nextStep.type} widget next.` : "- End with a specific follow-up question based on what they just told you."}`;
+${nextIsInteractive ? `- CRITICAL: Next is a ${nextStep.type}${nextStep.label ? ` ("${nextStep.label}")` : ""}. Acknowledge what they said warmly in 1-2 sentences, then smoothly transition to the next question. Don't just say "noted" — show you heard them.` : "- End with a specific follow-up question based on what they just told you."}`;
 
     const llmMessages = [
       { role: "system", content: prompt },
       ...allMsgs.filter(m=>!m.hidden).slice(-6).map(m=>({role:m.role,content:m.content}))
     ];
-    const llmOptions = { temperature: 0.8, num_predict: nextIsInteractive ? 40 : 120 };
+    const llmOptions = { temperature: 0.85, num_predict: nextIsInteractive ? 80 : 200 };
 
     // In production: use /api/chat (Vercel serverless → Gemini)
     // In dev: use /ollama/api/chat (Vite proxy → local Ollama)
@@ -750,7 +750,7 @@ ${nextIsInteractive ? `- CRITICAL: Next is a ${nextStep.type}${nextStep.label ? 
     const d = await res.json();
     const reply = d.message?.content?.trim();
     // Quality gate — reject generic/short/long/lazy/data-dump responses
-    const maxLen = nextIsInteractive ? 150 : 400;
+    const maxLen = nextIsInteractive ? 250 : 600;
     if (reply && reply.length > 15 && reply.length < maxLen
         && !/tell me (a bit )?more/i.test(reply)
         && !/thanks for (that|sharing)/i.test(reply)
@@ -1475,6 +1475,12 @@ function Dash({responses,course,onBack}){
    ═══════════ */
 export default function App(){
   const[role,setRole]=useState("student"); // "student" | "admin"
+  const handleRoleToggle=()=>{
+    if(role==="admin"){setRole("student");return;}
+    const pw=window.prompt("Enter admin password:");
+    if(pw==="admin")setRole("admin");
+    else if(pw!==null)window.alert("Incorrect password.");
+  };
   const[course,setCourse]=useState(null);
   const[msgs,setMsgs]=useState([]);
   const[input,setInput]=useState("");
@@ -1667,7 +1673,7 @@ export default function App(){
   const roleToggleJSX = (
     <div style={{position:"fixed",top:16,right:16,zIndex:50,display:"flex",alignItems:"center",gap:8}}>
       <span style={{fontSize:11,color:role==="student"?"#D8B4FE":"#6B7280",fontWeight:role==="student"?600:400,transition:"all .2s"}}>Student</span>
-      <button onClick={()=>setRole(r=>r==="student"?"admin":"student")}
+      <button onClick={handleRoleToggle}
         style={{width:44,height:24,borderRadius:12,border:"1px solid rgba(255,255,255,.15)",background:role==="admin"?"rgba(81,36,122,.6)":"rgba(255,255,255,.08)",cursor:"pointer",position:"relative",transition:"all .3s",padding:0}}>
         <div style={{width:18,height:18,borderRadius:9,background:"#fff",position:"absolute",top:2,left:role==="admin"?23:3,transition:"left .3s",boxShadow:"0 1px 3px rgba(0,0,0,.3)"}}/>
       </button>
