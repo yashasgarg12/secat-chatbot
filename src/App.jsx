@@ -1530,12 +1530,10 @@ function Dash({responses,course,onBack}){
    ═══════════ */
 export default function App(){
   const[role,setRole]=useState("student"); // "student" | "admin"
-  const handleRoleToggle=()=>{
-    if(role==="admin"){setRole("student");return;}
-    const pw=window.prompt("Enter admin password:");
-    if(pw==="admin")setRole("admin");
-    else if(pw!==null)window.alert("Incorrect password.");
-  };
+  const[showPwModal,setShowPwModal]=useState(false);
+  const[pwInput,setPwInput]=useState("");
+  const handleRoleToggle=()=>{if(role==="admin"){setRole("student");return;}setShowPwModal(true);setPwInput("");};
+  const handlePwSubmit=()=>{if(pwInput==="secatadmin"){setRole("admin");setShowPwModal(false);}else{window.alert("Incorrect password.");setPwInput("");}};
   const[course,setCourse]=useState(null);
   const[msgs,setMsgs]=useState([]);
   const[input,setInput]=useState("");
@@ -1801,6 +1799,19 @@ export default function App(){
     </div>
   );
 
+  const pwModalJSX = showPwModal && (
+    <div style={{position:"fixed",inset:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,.6)"}} onClick={()=>setShowPwModal(false)}>
+      <div style={{background:"#1a1a2e",borderRadius:16,padding:32,minWidth:320,border:"1px solid rgba(255,255,255,.15)"}} onClick={e=>e.stopPropagation()}>
+        <p style={{color:"#D8B4FE",fontSize:14,marginBottom:16,fontWeight:600}}>Enter Admin Password</p>
+        <input type="password" value={pwInput} onChange={e=>setPwInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handlePwSubmit()}} autoFocus
+          style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid rgba(255,255,255,.2)",background:"rgba(255,255,255,.05)",color:"#fff",fontSize:14,outline:"none",boxSizing:"border-box",marginBottom:16}}/>
+        <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
+          <button onClick={()=>setShowPwModal(false)} style={{padding:"8px 16px",borderRadius:8,border:"1px solid rgba(255,255,255,.15)",background:"transparent",color:"#9CA3AF",cursor:"pointer",fontSize:13}}>Cancel</button>
+          <button onClick={handlePwSubmit} style={{padding:"8px 16px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#7C3AED,#A855F7)",color:"#fff",cursor:"pointer",fontSize:13,fontWeight:600}}>Login</button>
+        </div>
+      </div>
+    </div>
+  );
   // ═══ COURSE SELECTOR ═══
   if(!course)return(
     <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(160deg,#0a0a1a,#1a0a2e 40%,#0f1a3e)"}}>
@@ -1811,6 +1822,7 @@ export default function App(){
         @media(min-width:768px){.course-grid{grid-template-columns:repeat(3,1fr)!important}}
       `}</style>
       {roleToggleJSX}
+      {pwModalJSX}
       <div style={{width:"100%",maxWidth:896}}>
         <div style={{textAlign:"center",marginBottom:48,animation:"slideUp .5s ease-out"}}>
           <div style={{display:"inline-flex",alignItems:"center",gap:12,marginBottom:24}}>
@@ -1883,6 +1895,7 @@ export default function App(){
         .sb-btn:hover{background:rgba(255,255,255,.05)}
       `}</style>
       {roleToggleJSX}
+      {pwModalJSX}
 
       {/* Sidebar — visible on md+ */}
       <div className="chat-sidebar" style={{display:"none",flexDirection:"column",width:288,borderRight:"1px solid rgba(255,255,255,.1)",padding:24,background:"rgba(10,10,26,.5)"}}>
