@@ -114,7 +114,7 @@ const COURSES = {
     keyDetail: "clinical placement rotations and skills labs",
     weeklyFlow: "Rotational clinical placement blocks",
     commonConcerns: ["placement scheduling", "feedback timeliness", "assessment alignment"],
-    mode: "lite" // 3-question mid-semester
+    mode: "lite" // 4-question mid-semester
   }
 };
 

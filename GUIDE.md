@@ -261,7 +261,7 @@ NEW_CODE: {
     keyDetail: "the most talked-about part of the course",
     weeklyFlow: "Brief description of weekly structure",
     commonConcerns: ["concern 1", "concern 2"],
-    mode: "full"  // or "lite" for mid-semester 3-question survey
+    mode: "full"  // or "lite" for mid-semester 4-question survey
 }
 ```
 
