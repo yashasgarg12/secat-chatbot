@@ -29,9 +29,10 @@ At the end, there's a dashboard with charts, sentiment analysis, and CSV/JSON ex
 3. **The project folder** — the folder containing this file
 
 That's it. You do NOT need:
-- An API key (the chatbot works without any AI service)
 - Python (unless you want to run the Excel report generator)
-- A server or hosting
+- A server or hosting (for local testing — production runs on Vercel)
+
+> **Note:** Running locally uses the smart rule engine for AI responses. The deployed version at [secat-chatbot.vercel.app](https://secat-chatbot.vercel.app) uses Google Gemini 2.0 Flash for adaptive follow-up questions. See [`DEPLOY.md`](DEPLOY.md) for production setup.
 
 ---
 
@@ -111,27 +112,19 @@ Go back to Terminal and press `Ctrl + C`.
 
 ### The AI Part
 
-The chatbot has two "brains":
+The chatbot has two layers:
 
-1. **Smart Rule Engine** (always works) — 100+ pre-written responses organised by topic, sentiment, and tone. This is the primary brain and works without any internet or AI service.
+1. **Google Gemini 2.0 Flash** (production) — The deployed version uses Gemini via a Vercel serverless function (`api/chat.js`). The API key is stored as a Vercel environment variable, never exposed to the browser. Gemini generates adaptive follow-up questions that reference specific course content.
 
-2. **Ollama Enhancement** (optional) — If you have Ollama running locally with the llama3.1 model, the chatbot will try to get AI-enhanced responses. If Ollama is down or slow, it silently falls back to the rule engine.
-
-You do NOT need Ollama. The chatbot works fine without it.
+2. **Smart Rule Engine** (fallback / local dev) — 100+ pre-written responses organised by topic, sentiment, and tone. This handles responses when running locally without an AI service, or if the Gemini API is temporarily unavailable.
 
 ### Data Storage
 
-There are two layers of data storage:
+**Production (deployed):** All session data saves to Google Sheets via a Google Apps Script web app. Each response upserts immediately — no data is lost even if the browser closes mid-session. See [`DEPLOY.md`](DEPLOY.md) for setup.
 
-1. **Server-side (persistent)** — After every completed session, the chatbot automatically saves:
-   - A CSV file per course in `secat-chatbot/data/` (e.g., `SECaT_INFS4203-7203.csv`) — rows are appended across sessions
-   - A JSON file per session in `secat-chatbot/data/` (e.g., `session_INFS4203-7203_2026-05-07T10-30-00-000Z.json`)
-   - The dashboard reads directly from these files via the Vite dev server API
-   - These files persist across browser refreshes and server restarts
+**Local development:** The Vite dev server saves CSV and JSON files to the `data/` folder on disk. Browser localStorage is used to resume incomplete sessions.
 
-2. **Browser localStorage (temporary)** — Only used to resume incomplete sessions. Once a session is completed, localStorage is cleared for that course.
-
-You do NOT need to manually download CSV/JSON files — they are already on your disk. The dashboard's "Export All CSV/JSON" buttons let you download a combined file of all saved sessions if you need a portable copy.
+The dashboard's "Export All CSV/JSON" buttons let you download a combined file of all saved sessions.
 
 ### Privacy
 
@@ -183,15 +176,6 @@ The speech-to-text feature requires either:
 
 This is a browser security restriction, not a bug. The chatbot works fine without it — just type instead.
 
-### "Ollama unavailable" in the console
-
-This is normal if you don't have Ollama installed. The chatbot falls back to its rule engine automatically. If you DO want Ollama:
-
-1. Install Ollama: https://ollama.ai
-2. Pull the model: `ollama pull llama3.1`
-3. Start Ollama: `ollama serve`
-4. The chatbot connects automatically via the Vite proxy
-
 ### The layout looks weird on my screen
 
 The chatbot is designed for:
@@ -217,7 +201,7 @@ The export buttons are on the Results Dashboard (visible after completing a surv
 secat-chatbot/
 ├── index.html          ← Main HTML page (minimal — just loads React)
 ├── package.json        ← Project dependencies and scripts
-├── vite.config.js      ← Dev server config (includes Ollama proxy)
+├── vite.config.js      ← Dev server config (includes local data API and proxy)
 ├── eslint.config.js    ← Code linting rules
 ├── GUIDE.md            ← This file
 ├── src/
