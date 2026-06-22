@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# R history
+.Rhistory
+
+# Test data (not for production)
+data/*.json

@@ -8,7 +8,7 @@
 
 ### 1a. Create the Google Sheet
 
-1. Go to [sheets.google.com](https://sheets.google.com) and sign in with **yashasgarg1@gmail.com**
+1. Go to [sheets.google.com](https://sheets.google.com) and sign in with **your-google-account@gmail.com**
 2. Click **Blank spreadsheet**
 3. Name it **"SECaT Chatbot Data"**
 4. Note the spreadsheet URL — you'll need it

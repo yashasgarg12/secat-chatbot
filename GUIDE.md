@@ -1,6 +1,6 @@
 # SECaT Chatbot — Setup & Troubleshooting Guide
 
-**Version:** 5.0 (April 2026)
+**Version:** 5.0 (June 2026)
 **Project:** UQ SSP "Closing the Wider Feedback Loop" (Project #5958830)
 **Built by:** Yashas Garg (MDataSc, UQ)
 
@@ -10,9 +10,10 @@
 
 This is a chatbot that collects student feedback for UQ courses. Instead of a boring survey form, students have a conversation — they get follow-up questions based on what they actually say, and the whole thing adapts to their tone (casual or formal).
 
-It currently supports three courses:
+It currently supports four courses:
 - **INFS4203/7203** — Data Mining (full SECaT, 10 questions)
 - **INFS3208** — Cloud Computing (full SECaT, 10 questions)
+- **CHEM1100** — Chemistry 1 (full SECaT, 13 questions)
 - **MEDI7200** — Developing Skills in Medicine (3-question mid-semester pilot)
 
 At the end, there's a dashboard with charts, sentiment analysis, and CSV/JSON export.
@@ -307,7 +308,7 @@ This creates a `dist/` folder with static HTML/CSS/JS files. These can be hosted
 
 ## Who to Contact
 
-- **Yashas Garg** — yashasgarg1@gmail.com — built the chatbot
+- **Yashas Garg** — built the chatbot
 - **Alex Civil** — SSP project coordinator
 - **Tanya (Yun-Ya Huang)** — building a parallel prototype
 
