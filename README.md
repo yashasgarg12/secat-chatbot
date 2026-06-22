@@ -45,7 +45,6 @@ A conversational alternative to traditional course evaluation surveys. Instead o
 
 - [`GUIDE.md`](GUIDE.md) — Setup and troubleshooting guide
 - [`DEPLOY.md`](DEPLOY.md) — Step-by-step deployment instructions
-- [`SSP_PROJECT_FULL_SUMMARY.md`](SSP_PROJECT_FULL_SUMMARY.md) — Full project summary
 
 ## Note on Security
 

@@ -132,7 +132,7 @@ This gives the chatbot its AI brain in the cloud (replaces local Ollama).
 1. Open your Vercel URL in a browser
 2. Complete a test feedback session
 3. After completion, check your Google Sheet — you should see data in both the **Sessions** and **CSV_Data** tabs
-4. Log in as admin (lock icon → password: `admin`)
+4. Log in as admin (lock icon → password: `secatadmin`)
 5. Click **View All Results & Dashboard** — verify charts load from Google Sheets data
 6. Test **Export All CSV** and **Export All JSON** buttons
 
@@ -159,7 +159,7 @@ For a custom domain (optional): Vercel supports free custom domains in Settings 
 - Click **Deploy → Manage deployments → Edit (pencil icon) → Version: New version → Deploy**
 
 ### Changing the admin password:
-- Edit `src/App.jsx`, search for `"admin"` in the password check near the role toggle
+- Edit `src/App.jsx`, search for `"secatadmin"` in the password check near the role toggle
 - Rebuild and redeploy
 
 ---
@@ -201,4 +201,4 @@ AI: Google Gemini 2.0 Flash (via Vercel serverless proxy, free tier)
 
 ---
 
-*Last updated: May 11, 2026*
+*Last updated: June 2026*

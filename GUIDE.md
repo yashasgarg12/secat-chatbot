@@ -51,11 +51,6 @@ Type this (replace the path with wherever your folder actually is):
 cd /path/to/secat-chatbot
 ```
 
-For example, on Yashas's Mac:
-```
-cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/UQ/SSP\ R1\ 2026/secat-chatbot
-```
-
 **Tip:** You can also drag the folder onto the Terminal window to paste its path.
 
 ### Step 3: Install Dependencies (First Time Only)
@@ -89,7 +84,7 @@ Open your web browser (Chrome, Safari, Firefox — any of them) and go to:
 http://localhost:5173
 ```
 
-You should see the course selection screen with three course cards.
+You should see the course selection screen with the available course cards.
 
 ### Step 6: Stop It
 
@@ -310,8 +305,7 @@ This creates a `dist/` folder with static HTML/CSS/JS files. These can be hosted
 
 - **Yashas Garg** — built the chatbot
 - **Alex Civil** — SSP project coordinator
-- **Tanya (Yun-Ya Huang)** — building a parallel prototype
 
 ---
 
-*Last updated: May 7, 2026*
+*Last updated: June 2026*
