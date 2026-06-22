@@ -30,8 +30,8 @@ A conversational alternative to traditional course evaluation surveys. Instead o
 ## Courses Configured
 
 - **INFS4203/7203** — Data Mining (S2 2025, full SECaT mode, 13 questions)
-- **INFS3208** — Cloud Computing (S2 2025, full mode)
-- **CHEM1100** — Chemistry 1 (S1 2026, full mode)
+- **INFS3208** — Cloud Computing (S2 2025, full mode, 13 questions)
+- **CHEM1100** — Chemistry 1 (S1 2026, full mode, 13 questions)
 - **MEDI7200** — Developing Skills in Medicine (S1 2026, mid-semester lite, 4 questions)
 
 ## Key Features
@@ -39,7 +39,7 @@ A conversational alternative to traditional course evaluation surveys. Instead o
 - **Adaptive AI conversations** — follow-ups reference specific course content (assessments, topics, curriculum changes)
 - **Privacy protection** — automated staff name detection and blocking; profanity filter with three-strike system; no student identifying data collected
 - **Session resilience** — responses save individually; sessions resume after browser close; 5-minute inactivity timeout
-- **Admin dashboard** — bar charts, radar profiles, sentiment analysis, word cloud, topic detection, heatmap, course comparison, CSV/JSON export
+- **Admin dashboard** — bar charts, radar profiles, sentiment analysis, key word frequency, topic detection, heatmap, course comparison, CSV/JSON export
 
 ## Documentation
 

@@ -675,7 +675,7 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
   return casual ? `Hm, tell me more — what specifically are you thinking of?` : `Could you be more specific about what you mean?`;
 };
 
-// Try Ollama, fall back to smart engine
+// Try LLM (Gemini in prod, Ollama in dev), fall back to smart engine
 const getResponse = async (course, step, userText, allMsgs, responses, nextStep) => {
   const smart = generateResponse(course, step, userText, allMsgs, responses, nextStep);
   const nextIsInteractive = nextStep && (nextStep.type === "scale" || nextStep.type === "mcq" || nextStep.type === "emoji");
@@ -696,7 +696,7 @@ const getResponse = async (course, step, userText, allMsgs, responses, nextStep)
     const userMsgs = allMsgs.filter(m => m.role === "user" && !m.hidden);
 
     const progress = responses.length;
-    const totalSteps = course.mode === "lite" ? 6 : 14;
+    const totalSteps = course.mode === "lite" ? 4 : 13;
     const progressPct = Math.round((progress / totalSteps) * 100);
 
     // Sentiment trend — is the student getting happier or more frustrated?
@@ -782,8 +782,7 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
     ];
     const llmOptions = { temperature: 0.9, num_predict: nextIsInteractive ? 150 : 250 };
 
-    // In production: use /api/chat (Vercel serverless → Gemini)
-    // In dev: use /ollama/api/chat (Vite proxy → local Ollama)
+    // In prod: /api/chat (Vercel → Gemini). In dev: /ollama/api/chat (Vite proxy → local Ollama)
     const llmUrl = IS_PRODUCTION ? "/api/chat" : "/ollama/api/chat";
     const llmBody = IS_PRODUCTION
       ? { messages: llmMessages, options: llmOptions }
@@ -818,7 +817,7 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
         && !/Next one/i.test(reply)) {
       return reply;
     }
-  } catch (_e) { /* Ollama unavailable or timed out — smart engine handles it */ }
+  } catch (_e) { /* LLM unavailable or timed out — smart engine handles it */ }
 
   return smart;
 };
