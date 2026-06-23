@@ -26,5 +26,6 @@ dist-ssr
 # R history
 .Rhistory
 
-# Test data (not for production)
+# Local session data (not for production)
 data/*.json
+data/*.csv

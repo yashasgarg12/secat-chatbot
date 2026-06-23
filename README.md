@@ -2,6 +2,8 @@
 
 **UQ SSP Project #5958830 — "Closing a Wider Feedback Loop"**
 
+![SECaT Chatbot](docs/screenshots/fig01_home_page.jpeg)
+
 A conversational alternative to traditional course evaluation surveys. Instead of a static form, students engage in a 3–5 minute AI-powered chat that adapts to their responses, asks contextual follow-up questions referencing specific course details, and captures richer qualitative feedback.
 
 **Live demo:** [secat-chatbot.vercel.app](https://secat-chatbot.vercel.app)
