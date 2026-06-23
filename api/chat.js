@@ -1,7 +1,7 @@
 // Vercel Serverless Function — LLM proxy to Google Gemini
 // Keeps API key server-side, never exposed to the browser.
-// Accepts the same request format as the chatbot's Ollama calls,
-// translates to Gemini API, and returns in the same response format.
+// Accepts the same request format as the chatbot's local dev calls,
+// translates to Gemini API, and returns in a compatible response format.
 
 // Simple in-memory rate limiter (per serverless instance)
 const rateMap = new Map();
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing messages array" });
     }
 
-    // Translate OpenAI/Ollama message format to Gemini format
+    // Translate OpenAI-style message format to Gemini format
     // Gemini uses: { contents: [{role, parts: [{text}]}], systemInstruction: {parts: [{text}]} }
     const systemMsg = messages.find(m => m.role === "system");
     const chatMsgs = messages.filter(m => m.role !== "system");
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
     // Extract the response text
     const replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    // Return in the same format as Ollama: { message: { content: "..." } }
+    // Return in a compatible format: { message: { content: "..." } }
     return res.status(200).json({
       message: { content: replyText }
     });

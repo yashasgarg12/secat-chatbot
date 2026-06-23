@@ -826,7 +826,8 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
    BAD WORDS & PRIVACY
    ═══════════ */
 const BAD = /\b(fuck\w*|shit\w*|bitch\w*|asshole|dickhead|cunt|retard\w*)\b/i;
-const PRIVACY = /\b(Dr\.?\s+[A-Z][a-z]+|Prof(?:essor)?\.?\s+[A-Z][a-z]+|Mr\.?\s+[A-Z][a-z]+|Mrs\.?\s+[A-Z][a-z]+|Ms\.?\s+[A-Z][a-z]+|[Tt]he\s+lecturer\s+[A-Z][a-z]+|[Tt]utor\s+[A-Z][a-z]+)\b|\b([Ll]awrie|[Ss]harpe|[Ll]adwig|[Gg]wen(?:dolyn)?)\b|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\b[sS]\d{7,8}\b/;
+// Blocks titled names (Dr/Prof/Mr/Mrs/Ms + surname), emails, and student IDs
+const PRIVACY = /\b(Dr\.?\s+[A-Z][a-z]+|Prof(?:essor)?\.?\s+[A-Z][a-z]+|Mr\.?\s+[A-Z][a-z]+|Mrs\.?\s+[A-Z][a-z]+|Ms\.?\s+[A-Z][a-z]+|[Tt]he\s+lecturer\s+[A-Z][a-z]+|[Tt]utor\s+[A-Z][a-z]+)\b|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\b[sS]\d{7,8}\b/;
 
 // Redact privacy info from stored responses (strip before save)
 const redact = (text) => text.replace(PRIVACY, "[REDACTED]");
