@@ -54,7 +54,7 @@ You should see `[]` (empty array). This means the API is working.
 
 ## Step 2: Get a Gemini API Key (2 minutes)
 
-This gives the chatbot its AI brain in the cloud (replaces local Ollama).
+This gives the chatbot its AI brain in the cloud (replaces the local dev fallback).
 
 1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 2. Sign in with your Google account

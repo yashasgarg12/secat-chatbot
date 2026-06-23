@@ -84,10 +84,10 @@ export default defineConfig({
   plugins: [react(), csvSavePlugin()],
   server: {
     proxy: {
-      '/ollama': {
+      '/local-llm': {
         target: 'http://localhost:11434',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/ollama/, '')
+        rewrite: (path) => path.replace(/^\/local-llm/, '')
       }
     }
   }

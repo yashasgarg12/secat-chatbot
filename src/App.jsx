@@ -675,7 +675,7 @@ const generateResponse = (course, step, userText, allMsgs, responses, nextStep) 
   return casual ? `Hm, tell me more — what specifically are you thinking of?` : `Could you be more specific about what you mean?`;
 };
 
-// Try LLM (Gemini in prod, Ollama in dev), fall back to smart engine
+// Try LLM, fall back to smart engine
 const getResponse = async (course, step, userText, allMsgs, responses, nextStep) => {
   const smart = generateResponse(course, step, userText, allMsgs, responses, nextStep);
   const nextIsInteractive = nextStep && (nextStep.type === "scale" || nextStep.type === "mcq" || nextStep.type === "emoji");
@@ -782,8 +782,8 @@ ${nextIsInteractive ? `- Next is a ${nextStep.type}${nextStep.label ? ` ("${next
     ];
     const llmOptions = { temperature: 0.9, num_predict: nextIsInteractive ? 150 : 250 };
 
-    // In prod: /api/chat (Vercel → Gemini). In dev: /ollama/api/chat (Vite proxy → local Ollama)
-    const llmUrl = IS_PRODUCTION ? "/api/chat" : "/ollama/api/chat";
+    // In prod: /api/chat (Vercel → Gemini). In dev: /local-llm/api/chat (Vite proxy → local LLM)
+    const llmUrl = IS_PRODUCTION ? "/api/chat" : "/local-llm/api/chat";
     const llmBody = IS_PRODUCTION
       ? { messages: llmMessages, options: llmOptions }
       : { model: "llama3.1", stream: false, messages: llmMessages, options: llmOptions };
